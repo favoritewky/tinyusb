@@ -19,9 +19,10 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "FreeRTOS.h"
-#include "task.h"
-#include "main.h"
 #include "cmsis_os.h"
+#include "main.h"
+#include "task.h"
+#include "tusb.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -143,10 +144,13 @@ void StartDefaultTask(void *argument)
 void tinyusb_s(void *argument)
 {
   /* USER CODE BEGIN tinyusb_s */
+  tusb_init();
   /* Infinite loop */
   for(;;)
   {
-    osDelay(1);
+    tud_task();
+    tud_cdc_write_flush();
+    taskYIELD();
   }
   /* USER CODE END tinyusb_s */
 }

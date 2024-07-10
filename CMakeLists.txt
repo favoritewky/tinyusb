@@ -14,9 +14,9 @@ set(CMAKE_C_EXTENSIONS ON)
 
 
 # Define the build type
-if(NOT CMAKE_BUILD_TYPE)
+if (NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE "Debug")
-endif()
+endif ()
 
 # Set the project name
 set(CMAKE_PROJECT_NAME tusb_test)
@@ -34,35 +34,63 @@ enable_language(C ASM)
 project(${CMAKE_PROJECT_NAME})
 message("Build type: " ${CMAKE_BUILD_TYPE})
 
+
 # Create an executable object type
-add_executable(${CMAKE_PROJECT_NAME})
+add_executable(${CMAKE_PROJECT_NAME}
+        usbdescripter.c
+)
 
 # Add STM32CubeMX generated sources
 add_subdirectory(cmake/stm32cubemx)
 
 # Link directories setup
 target_link_directories(${CMAKE_PROJECT_NAME} PRIVATE
-    # Add user defined library search paths
+        # Add user defined library search paths
 )
 
 # Add sources to executable
 target_sources(${CMAKE_PROJECT_NAME} PRIVATE
-    # Add user sources here
+        # Add user sources here
 )
 
 # Add include paths
 target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
-    # Add user defined include paths
+        # Add user defined include paths
 )
 
 # Add project symbols (macros)
 target_compile_definitions(${CMAKE_PROJECT_NAME} PRIVATE
-    # Add user defined symbols
+        # Add user defined symbols
 )
+
+file(GLOB_RECURSE RTOS_SRC "Middlewares/Third_Party/FreeRTOS/Source/*.*")
+add_library(freertos INTERFACE)
+target_sources(freertos INTERFACE ${RTOS_SRC})
+target_include_directories(freertos INTERFACE
+        Middlewares/Third_Party/FreeRTOS/Source/include
+        Core/Inc
+        Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM0
+        Drivers/CMSIS/Include
+        Drivers/CMSIS/Device/ST/STM32G0xx/Include
+)
+target_compile_definitions(freertos INTERFACE
+        STM32G0B1xx
+)
+
+add_library(tinyusb_config)
+target_sources(tinyusb_config PUBLIC tusb_config.h)
+target_include_directories(tinyusb_config PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+set_target_properties(tinyusb_config PROPERTIES LINKER_LANGUAGE C)
+
+#
+add_subdirectory(src)
+add_tinyusb(${CMAKE_PROJECT_NAME})
+
+
 
 # Add linked libraries
 target_link_libraries(${CMAKE_PROJECT_NAME}
-    stm32cubemx
-
-    # Add user defined libraries
+        stm32cubemx
+        tinyusb_config
+        # Add user defined libraries
 )

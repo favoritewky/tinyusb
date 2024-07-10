@@ -18,8 +18,9 @@
 /* USER CODE END Header */
 
 /* Includes ------------------------------------------------------------------*/
-#include "main.h"
 #include "stm32g0xx_it.h"
+#include "main.h"
+#include "tusb.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 /* USER CODE END Includes */
@@ -108,7 +109,8 @@ void HardFault_Handler(void)
 void USB_UCPD1_2_IRQHandler(void)
 {
   /* USER CODE BEGIN USB_UCPD1_2_IRQn 0 */
-
+  tud_int_handler(0);
+  return
   /* USER CODE END USB_UCPD1_2_IRQn 0 */
   HAL_PCD_IRQHandler(&hpcd_USB_DRD_FS);
   /* USER CODE BEGIN USB_UCPD1_2_IRQn 1 */

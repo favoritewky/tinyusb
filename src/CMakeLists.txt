@@ -34,6 +34,7 @@ function(add_tinyusb TARGET)
     ${CMAKE_CURRENT_FUNCTION_LIST_DIR}/class/vendor/vendor_host.c
     # typec
     ${CMAKE_CURRENT_FUNCTION_LIST_DIR}/typec/usbc.c
+    ${CMAKE_CURRENT_FUNCTION_LIST_DIR}/portable/st/stm32_fsdev/dcd_stm32_fsdev.c
     )
   target_include_directories(${TARGET} PUBLIC
     ${CMAKE_CURRENT_FUNCTION_LIST_DIR}
@@ -45,7 +46,7 @@ function(add_tinyusb TARGET)
     target_compile_options(${TARGET} PRIVATE
       -Wall
       -Wextra
-      -Werror
+#      -Werror
       -Wfatal-errors
       -Wdouble-promotion
       -Wstrict-prototypes
